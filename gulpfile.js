@@ -108,9 +108,10 @@ const createNewTag = (callback) => {
 const lintCommits = () =>
     utilities.exec(`${path.join('.','node_modules','.bin','conventional-changelog-lint')} --from=HEAD~20 --preset angular`);
 
-const lintTypescript = () => {
-    return tsProjectBuildOutput.src()
-        .pipe(tslint({formatter: "verbose"}))
+
+const lintTypescript = () => { 
+    return tsProjectBuildOutput.src() 
+        .pipe(tslint({formatter: "verbose", fix: true}))  // Might as well fix any lint errors here 
         .pipe(tslint.report())
 };
 

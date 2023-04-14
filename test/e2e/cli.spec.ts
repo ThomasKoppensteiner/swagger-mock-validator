@@ -29,7 +29,7 @@ const execute = (command: string): Promise<string> => {
 
 // tslint:disable-next-line:cyclomatic-complexity
 const invokeCommand = (options: InvokeCommandOptions): Promise<string> => {
-    let command = `./bin/swagger-mock-validator-local ${options.swagger} ${options.mock}`;
+    let command = `${fspath.join('bin', 'swagger-mock-validator-local')} ${options.swagger} ${options.mock}`;
 
     if (options.providerName) {
         command += ` --provider ${options.providerName}`;

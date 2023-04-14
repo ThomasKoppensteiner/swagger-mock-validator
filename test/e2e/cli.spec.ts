@@ -4,7 +4,7 @@ import * as express from 'express';
 import {Server} from 'http';
 import VError = require('verror');
 import {expectToFail} from '../support/expect-to-fail';
-
+import * as path from "path"
 interface InvokeCommandOptions {
     analyticsUrl?: string;
     auth?: string;
@@ -90,8 +90,8 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should succeed when a pact file and a swagger file are compatible', async () => {
         const result = await invokeCommand({
-            mock: 'test/e2e/fixtures/pact-working-consumer.json',
-            swagger: 'test/e2e/fixtures/swagger-provider.json'
+            mock: path.join('test','e2e','fixtures','pact-working-consumer.json'),
+            swagger: path.join('test','e2e','fixtures','swagger-provider.json')
         });
 
         expect(result).toEqual(jasmine.stringMatching('0 error'));
@@ -103,8 +103,8 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should fail when a pact file and a swagger file are not compatible', async () => {
         const error = await expectToFail(invokeCommand({
-            mock: 'test/e2e/fixtures/pact-broken-consumer.json',
-            swagger: 'test/e2e/fixtures/swagger-provider.json'
+            mock: path.join('test','e2e','fixtures','pact-broken-consumer.json'),
+            swagger: path.join('test','e2e','fixtures','swagger-provider.json')
         }));
 
         expect(error).toEqual(jasmine.stringMatching(
@@ -290,8 +290,8 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should fail when the swagger file is not valid', async () => {
         const error = await expectToFail(invokeCommand({
-            mock: 'test/e2e/fixtures/pact-working-consumer.json',
-            swagger: 'test/e2e/fixtures/swagger-invalid-provider.json'
+            mock: path.join('test','e2e','fixtures','pact-working-consumer.json'),
+            swagger: path.join('test','e2e','fixtures','swagger-invalid-provider.json')
         }));
 
         expect(error).toEqual(jasmine.stringMatching('#/info must have required property \'version\''));
@@ -299,15 +299,15 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should succeed when a pact url and a swagger url are compatible', async () => {
         await invokeCommand({
-            mock: urlTo('test/e2e/fixtures/pact-working-consumer.json'),
-            swagger: urlTo('test/e2e/fixtures/swagger-provider.json')
+            mock: urlTo(path.join('test','e2e','fixtures','pact-working-consumer.json')),
+            swagger: urlTo(path.join('test','e2e','fixtures','swagger-provider.json'))
         });
     }, 30000);
 
     it('should fail when the pact url cannot be retrieved', async () => {
         const error = await expectToFail(invokeCommand({
-            mock: urlTo('test/e2e/fixtures/pact-missing.json'),
-            swagger: urlTo('test/e2e/fixtures/swagger-provider.json')
+            mock: urlTo(path.join('test','e2e','fixtures','pact-missing.json')),
+            swagger: urlTo(path.join('test','e2e','fixtures','swagger-provider.json'))
         }));
 
         expect(error).toEqual(jasmine.stringMatching('Request failed with status code 404'));
@@ -315,17 +315,17 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should succeed when a pact broker url and a swagger url are compatible', async () => {
         await invokeCommand({
-            mock: urlTo('test/e2e/fixtures/pact-broker.json'),
+            mock: urlTo(path.join('test','e2e','fixtures','pact-broker.json')),
             providerName: 'provider-1',
-            swagger: urlTo('test/e2e/fixtures/swagger-provider.json')
+            swagger: urlTo(path.join('test','e2e','fixtures','swagger-provider.json'))
         });
     }, 30000);
 
     it('should succeed when a pact broker url with tag and a swagger url are compatible', async () => {
         await invokeCommand({
-            mock: urlTo('test/e2e/fixtures/pact-broker.json'),
+            mock: urlTo(path.join('test','e2e','fixtures','pact-broker.json')),
             providerName: 'provider-1',
-            swagger: urlTo('test/e2e/fixtures/swagger-provider.json'),
+            swagger: urlTo(path.join('test','e2e','fixtures','swagger-provider.json')),
             tag: 'production'
         });
     }, 30000);
@@ -333,19 +333,19 @@ describe('swagger-mock-validator/cli', () => {
     it('should log analytic events to the analytics url', async () => {
         await invokeCommand({
             analyticsUrl: urlTo('analytics'),
-            mock: 'test/e2e/fixtures/pact-working-consumer.json',
-            swagger: 'test/e2e/fixtures/swagger-provider.json'
+            mock: path.join('test','e2e','fixtures','pact-working-consumer.json'),
+            swagger: path.join('test','e2e','fixtures','swagger-provider.json')
         });
 
         expect(mockAnalytics.post).toHaveBeenCalledWith({
             execution: {
                 consumer: 'Billing Service',
                 mockFormat: 'pact',
-                mockPathOrUrl: 'test/e2e/fixtures/pact-working-consumer.json',
+                mockPathOrUrl: path.join('test','e2e','fixtures','pact-working-consumer.json'),
                 mockSource: 'path',
                 provider: 'User Service',
                 specFormat: 'swagger',
-                specPathOrUrl: 'test/e2e/fixtures/swagger-provider.json',
+                specPathOrUrl: path.join('test','e2e','fixtures','swagger-provider.json'),
                 specSource: 'path'
             },
             id: jasmine.any(String),
@@ -372,8 +372,8 @@ describe('swagger-mock-validator/cli', () => {
 
     it('should succeed when a pact file and an openapi3 file are compatible', async () => {
         const result = await invokeCommand({
-            mock: 'test/e2e/fixtures/pact-working-consumer.json',
-            swagger: 'test/e2e/fixtures/openapi3-provider.yaml'
+            mock: path.join('test','e2e','fixtures','pact-working-consumer.json'),
+            swagger: path.join('test','e2e','fixtures','openapi3-provider.yaml')
         });
         expect(result).toEqual(jasmine.stringMatching('0 error'));
         expect(result).toEqual(jasmine.stringMatching('2 warning'));
@@ -387,22 +387,22 @@ describe('swagger-mock-validator/cli', () => {
 
         await invokeCommand({
             auth,
-            mock: urlTo('test/e2e/fixtures/pact-broker.json'),
+            mock: urlTo(path.join('test','e2e','fixtures','pact-broker.json')),
             providerName: 'provider-1',
-            swagger: urlTo('test/e2e/fixtures/swagger-provider.json')
+            swagger: urlTo(path.join('test','e2e','fixtures','swagger-provider.json'))
         });
 
         expect(mockPactBroker.get).toHaveBeenCalledWith(
             jasmine.objectContaining({authorization: 'Basic dXNlcjpwYXNz'}),
-            jasmine.stringMatching('test/e2e/fixtures/pact-broker.json')
+            jasmine.stringMatching(path.join('test','e2e','fixtures','pact-broker.json'))
         );
     }, 30000);
 
     it('should format output objects to depth 0', async () => {
         const result = await invokeCommand({
-            mock: 'test/e2e/fixtures/pact-working-consumer.json',
+            mock: path.join('test','e2e','fixtures','pact-working-consumer.json'),
             outputDepth: '0',
-            swagger: 'test/e2e/fixtures/openapi3-provider.yaml'
+            swagger: path.join('test','e2e','fixtures','openapi3-provider.yaml')
         });
         expect(result).toEqual(jasmine.stringMatching('warnings: \\[Object|Array\\]'));
     });

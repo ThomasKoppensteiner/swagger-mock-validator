@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateAndDereferenceSpec = void 0;
-const SwaggerParser = require("swagger-parser");
+const SwaggerParser = require("@apidevtools/swagger-parser");
 const swagger_mock_validator_error_impl_1 = require("../swagger-mock-validator-error-impl");
 const validateAndDereferenceSpec = (document, pathOrUrl) => __awaiter(void 0, void 0, void 0, function* () {
     try {

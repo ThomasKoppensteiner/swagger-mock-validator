@@ -110,7 +110,7 @@ const lintCommits = () =>
 
 const lintTypescript = () => {
     return tsProjectBuildOutput.src()
-        .pipe(tslint({formatter: "verbose"}))
+        .pipe(tslint({formatter: "verbose", fix: true}))
         .pipe(tslint.report())
 };
 

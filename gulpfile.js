@@ -14,6 +14,7 @@ const jasmine = require('gulp-jasmine');
 const minimist = require('minimist');
 const ts = require('gulp-typescript');
 const tslint = require('gulp-tslint');
+const path = require('path');
 
 const options = minimist(process.argv.slice(2), {strings: ['type']});
 const tsProjectBuildOutput = ts.createProject('tsconfig.json', {noEmit: false});
@@ -51,12 +52,12 @@ const utilities = {
         return options.type;
     },
     getPackageJsonVersion: () => {
-        return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+        return JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
     }
 };
 
 const bumpVersion = () => {
-    return gulp.src(['./package.json'])
+    return gulp.src(['package.json'])
         .pipe(bump({type: utilities.getBumpType()}))
         .pipe(gulp.dest('./'))
 };
@@ -91,7 +92,7 @@ const compileBuildOutput = () => utilities.compileBuildOutput();
 
 const compileDist = () => {
     const tsProjectDist = ts.createProject('tsconfig.json', {noEmit: false});
-    const tsResult = gulp.src('lib/**/*.ts').pipe(tsProjectDist());
+    const tsResult = gulp.src(path.join(['lib','**','*.ts'])).pipe(tsProjectDist());
     return tsResult.js.pipe(gulp.dest('dist'));
 };
 
@@ -105,7 +106,7 @@ const createNewTag = (callback) => {
 };
 
 const lintCommits = () =>
-    utilities.exec('./node_modules/.bin/conventional-changelog-lint --from=HEAD~20 --preset angular');
+    utilities.exec(`${path.join('.','node_modules','.bin','conventional-changelog-lint')} --from=HEAD~20 --preset angular`);
 
 const lintTypescript = () => {
     return tsProjectBuildOutput.src()
@@ -128,11 +129,11 @@ const test = () => {
 };
 
 const watchAndRunE2eTests = () => {
-    gulp.watch(['build-output/lib/**/*', 'build-output/test/e2e/**/*', 'test/e2e/**/*.json'], gulp.series(e2eTest));
+    gulp.watch([`${path.join('build-output','lib','**','*')},${path.join('build-output','test','e2e','**','*')},${path.join('test','e2e','**','*.json')}`], gulp.series(e2eTest));
 };
 
 const watchAndRunUnitTests = () => {
-    gulp.watch(['lib/**/*.ts', 'test/**/*.ts'], gulp.series(compileAndUnitTest));
+    gulp.watch([`${path.join('lib','**','*.ts')}, ${path.join('test','**','l*.ts')}`], gulp.series(compileAndUnitTest));
 };
 
 const cleanCopyAndCompileBuildOutput = gulp.series(
